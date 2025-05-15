@@ -1,0 +1,61 @@
+﻿@using System;
+@using System.Collections.Generic;
+@using InventoryHubClient.Services;
+@inject Services.APIHandler apihandler;
+
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+@code {
+    public List<Items> allItems { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            allItems = await apihandler.GetItemsAsync();
+            Console.WriteLine($"Loaded {allItems.Count} items.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR loading items: {ex.Message}");
+        }
+    }
+}
+
+
+<h3>Welcome to Inventory Hub</h3>
+<p>Manage your inventory with ease.</p>
+<h4>All Items</h4>
+@if (allItems != null && allItems.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Item Name</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in allItems)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No items found.</p>
+}
+
